@@ -9,24 +9,29 @@ const App = () => {
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setRecipe('');
-    setError('');
+  e.preventDefault();
+  setLoading(true);
+  setRecipe('');
+  setError('');
 
-    try {
-      const response = await axios.post('http://localhost:5000/api/generate', {
-        ingredients,
-      });
+  try {
+    const ingredientsArray = ingredients
+      .split(',')
+      .map(item => item.trim())
+      .filter(item => item); // remove empty strings
 
-      setRecipe(response.data.recipe);
-    } catch (err) {
-      setError('Failed to generate recipe. Please try again.');
-      console.error('Error:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const response = await axios.post('http://localhost:5000/api/recipe', {
+      ingredients: ingredientsArray,
+    });
+
+    setRecipe(response.data.recipe);
+  } catch (err) {
+    setError('Failed to generate recipe. Please try again.');
+    console.error('Error:', err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="container">

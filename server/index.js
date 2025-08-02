@@ -9,36 +9,45 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/generate', async (req, res) => {
+app.post('/api/recipe', async (req, res) => {
   const { ingredients } = req.body;
+  console.log("Received ingredients:", ingredients);
+
+  if (!Array.isArray(ingredients)) {
+    return res.status(400).json({ error: 'Ingredients must be an array' });
+  }
 
   try {
-    const prompt = `Suggest a simple and tasty recipe using the following ingredients: ${ingredients}. Keep the instructions short and beginner-friendly.`;
-
+    console.log("seding request");
     const response = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GOOGLE_API_KEY}`,
       {
-        contents: [{ parts: [{ text: prompt }] }]
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': process.env.GEMINI_API_KEY
-        }
+        contents: [
+          {
+            parts: [
+              {
+                text: `Suggest a recipe using these ingredients: ${ingredients.join(', ')}. Give it in a structured format.`,
+              },
+            ],
+          },
+        ],
       }
     );
 
     const generatedText = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
+    console.log("Generated text:", generatedText);
 
     if (generatedText) {
       res.json({ recipe: generatedText });
     } else {
       res.status(500).json({ error: 'No recipe generated' });
     }
-  } catch (error) {
-    console.error('Error generating recipe:', error.message);
-    res.status(500).json({ error: 'Failed to generate recipe' });
-  }
+
+  }catch (error) {
+  console.error('Error generating recipe:', error.response?.data || error.message);
+  res.status(500).json({ error: 'Failed to generate recipe' });
+}
 });
 
-app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
