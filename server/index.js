@@ -6,7 +6,9 @@ require('dotenv').config();
 const app = express();
 const PORT = 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: ['https://bite-bot-phi.vercel.app', 'http://localhost:5173'], // Adjust the origin as needed
+}));
 app.use(express.json());
 
 app.post('/api/recipe', async (req, res) => {

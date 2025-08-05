@@ -20,7 +20,7 @@ const App = () => {
       .map(item => item.trim())
       .filter(item => item); // remove empty strings
 
-    const response = await axios.post('http://localhost:5000/api/recipe', {
+    const response = await axios.post('https://bitebot-server.onrender.com/api/recipe', {
       ingredients: ingredientsArray,
     });
 
