@@ -1,4 +1,6 @@
-.container {
+@import "tailwindcss";
+
+/* .container {
   font-family: Arial, sans-serif;
   padding: 2rem;
   max-width: 600px;
@@ -52,4 +54,4 @@
 .error {
   color: red;
   margin-top: 1rem;
-}
+} */
